@@ -3,12 +3,12 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
 from typing import Any
 
 
-class SourceType(str, Enum):
+class SourceType(StrEnum):
     """Supported source systems."""
 
     LOCAL_CSV = "local_csv"
@@ -55,4 +55,3 @@ class IngestionResult:
     destination_uri: str
     checksum: str
     loaded_at_utc: str
-
