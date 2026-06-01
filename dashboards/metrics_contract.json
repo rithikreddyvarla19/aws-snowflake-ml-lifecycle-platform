@@ -1,0 +1,12 @@
+{
+  "model_metrics": ["precision", "recall", "f1", "roc_auc", "accuracy"],
+  "business_kpis": [
+    "customers_flagged_for_retention",
+    "true_churners_captured",
+    "false_positive_outreach",
+    "missed_churners",
+    "estimated_retention_spend"
+  ],
+  "monitoring_metrics": ["psi", "accuracy_drop", "prediction_distribution_shift"]
+}
+

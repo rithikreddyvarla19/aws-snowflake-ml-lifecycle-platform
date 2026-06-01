@@ -1,0 +1,74 @@
+project:
+  name: aws-snowflake-ml-lifecycle-platform
+  business_use_case: customer_churn_prediction
+  owner: ml-platform
+  environment: local
+
+aws:
+  region: us-east-1
+  raw_bucket: ${RAW_BUCKET}
+  curated_bucket: ${CURATED_BUCKET}
+  artifact_bucket: ${ARTIFACT_BUCKET}
+  glue_database: churn_ml
+  glue_role_arn: ${GLUE_ROLE_ARN}
+  sagemaker_role_arn: ${SAGEMAKER_ROLE_ARN}
+  sagemaker_endpoint_name: churn-prediction-prod
+
+snowflake:
+  account: ${SNOWFLAKE_ACCOUNT}
+  user: ${SNOWFLAKE_USER}
+  password: ${SNOWFLAKE_PASSWORD}
+  warehouse: ${SNOWFLAKE_WAREHOUSE}
+  database: CHURN_ML
+  raw_schema: RAW
+  feature_schema: FEATURE_STORE
+  monitoring_schema: MONITORING
+  role: ${SNOWFLAKE_ROLE}
+
+data_sources:
+  customers:
+    source_type: local_csv
+    uri: data/sample/customers.csv
+    primary_key: customer_id
+  subscriptions:
+    source_type: local_csv
+    uri: data/sample/subscriptions.csv
+    primary_key: subscription_id
+  product_events:
+    source_type: local_csv
+    uri: data/sample/product_events.csv
+    primary_key: event_id
+
+feature_store:
+  entity_key: customer_id
+  offline_table: CHURN_ML.FEATURE_STORE.CUSTOMER_CHURN_FEATURES
+  online_table: CHURN_ML.FEATURE_STORE.CUSTOMER_CHURN_FEATURES_ONLINE
+  feature_timestamp_column: feature_created_at
+
+training:
+  target_column: churned
+  test_size: 0.25
+  random_state: 42
+  experiment_name: subscription-churn
+  tracking_uri: ${MLFLOW_TRACKING_URI:-file:./mlruns}
+  metric_to_optimize: roc_auc
+  candidates:
+    - logistic_regression
+    - random_forest
+    - xgboost
+    - tensorflow_dnn
+  champion_min_roc_auc: 0.78
+
+monitoring:
+  reference_dataset_uri: data/sample/customers.csv
+  psi_threshold: 0.2
+  accuracy_drop_threshold: 0.05
+  prediction_shift_threshold: 0.15
+  min_scored_records: 1000
+
+retraining:
+  enabled: true
+  trigger_on_drift: true
+  trigger_on_accuracy_drop: true
+  airflow_dag_id: churn_ml_lifecycle
+

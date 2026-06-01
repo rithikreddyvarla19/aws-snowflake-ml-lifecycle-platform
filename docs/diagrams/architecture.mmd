@@ -1,0 +1,21 @@
+flowchart LR
+  CRM["CRM Customers"] --> ING["Multi-source Ingestion"]
+  BILLING["Billing Subscriptions"] --> ING
+  EVENTS["Product Events"] --> ING
+  ING --> S3RAW["S3 Raw Zone"]
+  ING --> SFRAW["Snowflake RAW Schema"]
+  S3RAW --> GLUE["AWS Glue PySpark"]
+  SFRAW --> GLUE
+  GLUE --> S3CURATED["S3 Curated Zone"]
+  GLUE --> FS["Snowflake Feature Store"]
+  FS --> TRAIN["Training, HPO, Evaluation"]
+  TRAIN --> MLFLOW["MLflow Registry"]
+  MLFLOW --> CHAMPION["Champion Artifact"]
+  CHAMPION --> SAGEMAKER["SageMaker Endpoint"]
+  CHAMPION --> FASTAPI["FastAPI REST API"]
+  SAGEMAKER --> LOGS["Prediction Logs"]
+  FASTAPI --> LOGS
+  LOGS --> MONITOR["Drift and Accuracy Monitoring"]
+  MONITOR --> RETRAIN["Retraining Policy"]
+  RETRAIN --> AIRFLOW["Airflow Orchestration"]
+

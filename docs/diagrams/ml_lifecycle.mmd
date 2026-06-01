@@ -1,0 +1,13 @@
+stateDiagram-v2
+  [*] --> Ingest
+  Ingest --> Validate
+  Validate --> EngineerFeatures
+  EngineerFeatures --> TrainCandidates
+  TrainCandidates --> CompareModels
+  CompareModels --> RegisterChampion
+  RegisterChampion --> Deploy
+  Deploy --> Monitor
+  Monitor --> RetrainDecision
+  RetrainDecision --> TrainCandidates: drift or degradation
+  RetrainDecision --> Monitor: healthy
+

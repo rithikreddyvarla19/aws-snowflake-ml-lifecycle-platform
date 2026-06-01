@@ -1,0 +1,14 @@
+flowchart TD
+  A["Source Extract"] --> B["Raw JSONL Snapshot"]
+  B --> C["Raw S3 Bucket"]
+  B --> D["Snowflake RAW Tables"]
+  C --> E["Glue PySpark Feature Job"]
+  D --> E
+  E --> F["Curated Parquet"]
+  E --> G["Offline Feature Store"]
+  G --> H["Training Dataset"]
+  H --> I["Model Candidates"]
+  I --> J["Champion Model"]
+  J --> K["Batch and Online Predictions"]
+  K --> L["Monitoring Tables"]
+
